@@ -28,8 +28,17 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.37529975" />
+    <property name="project.structure.side.proportion" value="0.21223022" />
     <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="ro.mta.se.lab.controllers" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="W:\Sunrise\sunrise\src\main\resources" />
+      <recent name="W:\Sunrise\sunrise\src\main\resources\view" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
