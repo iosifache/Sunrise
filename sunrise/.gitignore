@@ -3,7 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij
 
 ### Custom ###
-sunrise/lib
+lib
+target
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider

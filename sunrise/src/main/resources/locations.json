@@ -1,0 +1,134 @@
+{
+  "countries": [
+    {
+      "name": "Romania",
+      "cities": [
+        {
+          "id": 683506,
+          "name": "Bucharest"
+        },
+        {
+          "id": 683843,
+          "name": "Braşov"
+        }
+      ]
+    },
+    {
+      "name": "Greece",
+      "cities": [
+        {
+          "id": 264371,
+          "name": "Atena"
+        },
+        {
+          "id": 258543,
+          "name": "Lávrio"
+        }
+      ]
+    },
+    {
+      "name": "Great Britain",
+      "cities": [
+        {
+          "id": 2643743,
+          "name": "London"
+        },
+        {
+          "id": 2653822,
+          "name": "Cardiff"
+        }
+      ]
+    },
+    {
+      "name": "France",
+      "cities": [
+        {
+          "id": 2988507,
+          "name": "Paris"
+        },
+        {
+          "id": 2996944,
+          "name": "Lyon"
+        }
+      ]
+    },
+    {
+      "name": "Spain",
+      "cities": [
+        {
+          "id": 3117735,
+          "name": "Madrid"
+        },
+        {
+          "id": 3128760,
+          "name": "Barcelona"
+        }
+      ]
+    },
+    {
+      "name": "Italy",
+      "cities": [
+        {
+          "id": 3169070,
+          "name": "Rome"
+        },
+        {
+          "id": 3176959,
+          "name": "Florence"
+        }
+      ]
+    },
+    {
+      "name": "Germany",
+      "cities": [
+        {
+          "id": 2950159,
+          "name": "Berlin"
+        },
+        {
+          "id": 2867714,
+          "name": "Munich"
+        }
+      ]
+    },
+    {
+      "name": "Poland",
+      "cities": [
+        {
+          "id": 756135,
+          "name": "Warsaw"
+        },
+        {
+          "id": 3099434,
+          "name": "Gdańsk"
+        }
+      ]
+    },
+    {
+      "name": "Japan",
+      "cities": [
+        {
+          "id": 1850147,
+          "name": "Tokyo"
+        },
+        {
+          "id": 1853909,
+          "name": "Osaka"
+        }
+      ]
+    },
+    {
+      "name": "United States of America",
+      "cities": [
+        {
+          "id": 4930956,
+          "name": "Boston"
+        },
+        {
+          "id": 5368361,
+          "name": "Los Angeles"
+        }
+      ]
+    }
+  ]
+}
