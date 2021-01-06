@@ -5,10 +5,10 @@ import java.util.List;
 
 public class Country implements ILocation {
 
-  String name;
-  List<City> cityList = new ArrayList<City>();
+  private String name;
+  private List<City> cityList = new ArrayList<City>();
 
-  public Country(String name, List<City> cityList){
+  public Country(String name, List<City> cityList) {
     this.name = name;
     this.cityList = cityList;
   }
@@ -26,8 +26,7 @@ public class Country implements ILocation {
     return this.getName();
   }
 
-  public Long getCityId(){
-    return (long)-1;
+  public Long getCityId() {
+    return (long) -1;
   }
-
 }
