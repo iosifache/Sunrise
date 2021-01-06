@@ -22,9 +22,7 @@ public class Main extends Application {
       primaryStage.setResizable(false);
       primaryStage.show();
     } catch (IOException e) {
-      e.printStackTrace();
+      System.exit(1);
     }
-
   }
-
 }

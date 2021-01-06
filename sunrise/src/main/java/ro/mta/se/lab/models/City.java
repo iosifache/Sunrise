@@ -2,10 +2,10 @@ package ro.mta.se.lab.models;
 
 public class City implements ILocation {
 
-  Long id;
-  String name;
+  private Long id;
+  private String name;
 
-  public City(long id, String name){
+  public City(long id, String name) {
     this.id = id;
     this.name = name;
   }
@@ -22,5 +22,4 @@ public class City implements ILocation {
   public Long getCityId() {
     return id;
   }
-
 }
