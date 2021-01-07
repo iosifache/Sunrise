@@ -3,7 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,intellij
 
 ### Custom ###
-lib
+lib/**
+!lib/.gitkeep
 target
 src/main/resources/sunrise.conf
 log.txt

@@ -32,7 +32,7 @@ public class WeatherConditions {
     this.precipitationVolume = precipitationVolume;
   }
 
-  public WeatherConditions(){
+  public WeatherConditions() {
     this(false, null, 0, 0, 0, 0);
   }
 

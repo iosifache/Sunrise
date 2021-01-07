@@ -14,12 +14,12 @@ public class City implements ILocation {
     return name;
   }
 
+  public Long getCityId() {
+    return id;
+  }
+
   @Override
   public String toString() {
     return this.getName();
-  }
-
-  public Long getCityId() {
-    return id;
   }
 }
