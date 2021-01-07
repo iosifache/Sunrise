@@ -3,9 +3,7 @@ package ro.mta.se.lab.controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +25,6 @@ import javafx.stage.Stage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import ro.mta.se.lab.models.City;
 import ro.mta.se.lab.models.Country;
 import ro.mta.se.lab.models.ILocation;
@@ -58,7 +55,8 @@ public class WindowController {
   private double x;
   private double y;
   private List<Country> countryList = new ArrayList<Country>();
-  private WeatherConditions weather = new WeatherConditions(false, "", 0, 0, 0, 0);
+  private WeatherConditions weather = new WeatherConditions();
+  private String apiKey;
 
   @FXML private ImageView weatherPicture;
   @FXML private TreeView<ILocation> locationTree;
@@ -80,8 +78,10 @@ public class WindowController {
     try {
       initializeLocationList();
       initializeTreeView();
+      initializeApiKey();
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.getGlobal().log(Level.SEVERE, "Critical error on initializing the window controller");
+      System.exit(1);
     }
   }
 
@@ -112,7 +112,7 @@ public class WindowController {
     Logger.getGlobal().log(Level.INFO, "Closed window");
   }
 
-  public void initializeLocationList() {
+  private void initializeLocationList() {
     // Read the file containing the locations from resources
     JSONParser jsonParser = new JSONParser();
     String jsonFilename = this.getClass().getResource(LOCATIONS_RESOURCE_FILENAME).getPath();
@@ -204,6 +204,28 @@ public class WindowController {
     Logger.getGlobal().log(Level.INFO, "Success in location tree initialization");
   }
 
+  // Only for Mockito testing demonstration..
+  public void setExternalWeather(WeatherConditions weather){
+    this.weather = weather;
+  }
+
+  public void initializeApiKey(){
+    Properties configuration = new Properties();
+    try {
+      File configurationFile =
+          new File(getClass().getResource(CONFIGURATION_RESOURCE_FILENAME).toURI());
+      configuration.load(new FileInputStream(configurationFile));
+    } catch (Exception e) {
+      Logger.getGlobal().log(Level.SEVERE, "Critical error on reading the configuration file");
+      System.exit(1);
+    }
+    this.apiKey = configuration.getProperty("api_key");
+    if (this.apiKey == null) {
+      Logger.getGlobal().log(Level.SEVERE, "Critical error on reading the API key");
+      System.exit(1);
+    }
+  }
+
   private float tryConvertToFloat(Object object) {
     try {
       return ((Double) object).floatValue();
@@ -216,75 +238,59 @@ public class WindowController {
     }
   }
 
-  public void changeWeather(long cityId) throws IOException, URISyntaxException {
-    // Get API key stored in resources
-    Properties configuration = new Properties();
-    File configurationFile =
-        new File(getClass().getResource(CONFIGURATION_RESOURCE_FILENAME).toURI());
-    try {
-      configuration.load(new FileInputStream(configurationFile));
-    } catch (IOException e) {
-      Logger.getGlobal().log(Level.SEVERE, "Critical error on reading the configuration file");
-      System.exit(1);
-    }
-    String apiKey = configuration.getProperty("api_key");
-    if (apiKey == null) {
-      Logger.getGlobal().log(Level.SEVERE, "Critical error on reading the API key");
-      System.exit(1);
-    }
-
+  public void changeWeather(long cityId) {
     // Create API call
-    String apiCall = String.format(API_REQUEST_FORMAT_STRING, cityId, apiKey);
-    HttpURLConnection con = (HttpURLConnection) (new URL(apiCall)).openConnection();
-    con.setRequestMethod("GET");
-    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-      String response = new String(con.getInputStream().readAllBytes());
+    String apiCall = String.format(API_REQUEST_FORMAT_STRING, cityId, this.apiKey);
+    try {
+      HttpURLConnection con = (HttpURLConnection) (new URL(apiCall)).openConnection();
+      con.setRequestMethod("GET");
+      if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+        String response = new String(con.getInputStream().readAllBytes());
 
-      // Parse
-      JSONParser jsonParser = new JSONParser();
-      JSONObject rawWeather = null;
-      try {
-        rawWeather = (JSONObject) jsonParser.parse(response);
-      } catch (ParseException e) {
-        Logger.getGlobal().log(Level.FINER, "Error on parsing the weather data");
-        return;
+        // Parse
+        JSONParser jsonParser = new JSONParser();
+        JSONObject rawWeather = (JSONObject) jsonParser.parse(response);
+
+        // Get picture
+        JSONArray workingArrayMember = (JSONArray) rawWeather.get("weather");
+        JSONObject workingMember = (JSONObject) workingArrayMember.get(0);
+        this.weather.setPictureId((String) workingMember.get("icon"));
+
+        // Get temperature
+        workingMember = (JSONObject) rawWeather.get("main");
+        this.weather.setTemperature(this.tryConvertToFloat(workingMember.get("temp")));
+
+        // Get wind speed
+        workingMember = (JSONObject) rawWeather.get("wind");
+        this.weather.setWindSpeed(this.tryConvertToFloat(workingMember.get("speed")));
+
+        // Get cloudiness
+        workingMember = (JSONObject) rawWeather.get("clouds");
+        this.weather.setCloudiness(this.tryConvertToFloat(workingMember.get("all")));
+
+        // Get precipitations
+        float precipitationVolume = 0;
+        workingMember = (JSONObject) rawWeather.get("rain");
+        if (workingMember != null && workingMember.get("1h") != null)
+          precipitationVolume = this.tryConvertToFloat(workingMember.get("1h"));
+        workingMember = (JSONObject) rawWeather.get("snow");
+        if (workingMember != null && workingMember.get("1h") != null)
+          precipitationVolume += this.tryConvertToFloat(workingMember.get("1h"));
+        this.weather.setPrecipitationVolume(precipitationVolume);
+
+        // Binding workaround, as it doesn't bind nothing..
+        this.weatherPicture.setImage(this.weather.getPicture());
+        this.temperatureLabel.setText(this.weather.getTemperature());
+        this.cloudinessLabel.setText(this.weather.getCloudiness());
+        this.windSpeedLabel.setText(this.weather.getWindSpeed());
+        this.precipitationVolumeLabel.setText(this.weather.getPrecipitationVolume());
+
+        Logger.getGlobal().log(Level.INFO, "New weather displayed:\n" + this.weather.toString());
       }
-
-      // Get picture
-      JSONArray workingArrayMember = (JSONArray) rawWeather.get("weather");
-      JSONObject workingMember = (JSONObject) workingArrayMember.get(0);
-      this.weather.setPictureId((String) workingMember.get("icon"));
-
-      // Get temperature
-      workingMember = (JSONObject) rawWeather.get("main");
-      this.weather.setTemperature(this.tryConvertToFloat(workingMember.get("temp")));
-
-      // Get wind speed
-      workingMember = (JSONObject) rawWeather.get("wind");
-      this.weather.setWindSpeed(this.tryConvertToFloat(workingMember.get("speed")));
-
-      // Get cloudiness
-      workingMember = (JSONObject) rawWeather.get("clouds");
-      this.weather.setCloudiness(this.tryConvertToFloat(workingMember.get("all")));
-
-      // Get precipitations
-      float precipitationVolume = 0;
-      workingMember = (JSONObject) rawWeather.get("rain");
-      if (workingMember != null && workingMember.get("1h") != null)
-        precipitationVolume = this.tryConvertToFloat(workingMember.get("1h"));
-      workingMember = (JSONObject) rawWeather.get("snow");
-      if (workingMember != null && workingMember.get("1h") != null)
-        precipitationVolume += this.tryConvertToFloat(workingMember.get("1h"));
-      this.weather.setPrecipitationVolume(precipitationVolume);
-
-      // Binding workaround, as it doesn't bind nothing..
-      this.weatherPicture.setImage(this.weather.getPictureId());
-      this.temperatureLabel.setText(this.weather.getTemperature());
-      this.cloudinessLabel.setText(this.weather.getCloudiness());
-      this.windSpeedLabel.setText(this.weather.getWindSpeed());
-      this.precipitationVolumeLabel.setText(this.weather.getPrecipitationVolume());
-
-      Logger.getGlobal().log(Level.INFO, "New weather displayed:\n" + this.weather.toString());
+    } catch (Exception e) {
+      Logger.getGlobal().log(Level.FINER, "Error on parsing the weather data");
+      return;
     }
+
   }
 }
