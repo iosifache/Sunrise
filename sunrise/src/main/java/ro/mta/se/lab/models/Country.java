@@ -2,6 +2,7 @@ package ro.mta.se.lab.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import jdk.jshell.spi.ExecutionControl.NotImplementedException;
 
 public class Country implements ILocation {
 
@@ -26,7 +27,7 @@ public class Country implements ILocation {
     return this.getName();
   }
 
-  public Long getCityId() {
-    return (long) -1;
+  public Long getCityId() throws NotImplementedException {
+    throw new NotImplementedException("Method not implemented in the country class");
   }
 }

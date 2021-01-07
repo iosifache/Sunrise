@@ -205,11 +205,11 @@ public class WindowController {
   }
 
   // Only for Mockito testing demonstration..
-  public void setExternalWeather(WeatherConditions weather){
+  public void setExternalWeather(WeatherConditions weather) {
     this.weather = weather;
   }
 
-  public void initializeApiKey(){
+  public void initializeApiKey() {
     Properties configuration = new Properties();
     try {
       File configurationFile =
@@ -291,6 +291,5 @@ public class WindowController {
       Logger.getGlobal().log(Level.FINER, "Error on parsing the weather data");
       return;
     }
-
   }
 }
