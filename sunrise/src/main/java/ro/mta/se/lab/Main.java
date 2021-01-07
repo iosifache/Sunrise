@@ -15,7 +15,7 @@ import javafx.stage.StageStyle;
 public class Main extends Application {
 
   static final String LOG_FILENAME = "log.txt";
-  static final String VIEW_RESOURCE_FILENAME = "/view/MainView.fxml";
+  static final String VIEW_RESOURCE_FILENAME = "/view/WindowView.fxml";
 
   private static void setupLogger() {
     Logger logger = Logger.getGlobal();
