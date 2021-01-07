@@ -7,8 +7,14 @@ import javafx.scene.image.Image;
 
 public class WeatherConditions {
 
+  static final String ICON_URL_FORMAT_STRING = "http://openweathermap.org/img/wn/%s@2x.png";
+  static final String TEMPERATURE_LABEL_SUFFIX = "° C";
+  static final String WIND_SPEED_LABEL_SUFFIX = " km/h";
+  static final String CLOUDINESS_LABEL_SUFFIX = "%%";
+  static final String PRECIPITATION_VOLUME_LABEL_SUFFIX = " mm";
+
   private boolean isPopulated = false;
-  private String overallWeatherPicture;
+  private String pictureId;
   private float temperature;
   private float windSpeed;
   private float cloudiness;
@@ -16,31 +22,31 @@ public class WeatherConditions {
 
   public WeatherConditions(
       boolean isPopulated,
-      String overallWeatherPicture,
+      String pictureId,
       float temperature,
       float windSpeed,
       float cloudiness,
       float precipitationVolume) {
     this.isPopulated = isPopulated;
-    this.overallWeatherPicture = overallWeatherPicture;
+    this.pictureId = pictureId;
     this.temperature = temperature;
     this.windSpeed = windSpeed;
     this.cloudiness = cloudiness;
     this.precipitationVolume = precipitationVolume;
   }
 
-  public void setOverallWeatherPicture(String overallWeatherPicture) {
+  public void setPictureId(String pictureId) {
     this.isPopulated = true;
-    this.overallWeatherPicture = overallWeatherPicture;
+    this.pictureId = pictureId;
   }
 
-  public Image getOverallWeatherPicture() {
-    return new Image("http://openweathermap.org/img/wn/" + this.overallWeatherPicture + "@2x.png");
+  public Image getPictureId() {
+    if (!isPopulated) return null;
+    return new Image(String.format(ICON_URL_FORMAT_STRING, this.pictureId));
   }
 
-  public SimpleObjectProperty<Image> overallWeatherPictureProperty() {
-    if (!isPopulated) return new SimpleObjectProperty<Image>(null);
-    return new SimpleObjectProperty<Image>(this.getOverallWeatherPicture());
+  public SimpleObjectProperty<Image> pictureIdProperty() {
+    return new SimpleObjectProperty<Image>(this.getPictureId());
   }
 
   public void setTemperature(float temperature) {
@@ -50,7 +56,7 @@ public class WeatherConditions {
 
   public String getTemperature() {
     if (!isPopulated) return "";
-    return String.format("%.1f° C", this.temperature);
+    return String.format("%.1f" + TEMPERATURE_LABEL_SUFFIX, this.temperature);
   }
 
   public StringProperty temperatureProperty() {
@@ -64,7 +70,7 @@ public class WeatherConditions {
 
   public String getWindSpeed() {
     if (!isPopulated) return "";
-    return String.format("%.1f km/h", this.windSpeed);
+    return String.format("%.1f" + WIND_SPEED_LABEL_SUFFIX, this.windSpeed);
   }
 
   public StringProperty windSpeedProperty() {
@@ -78,7 +84,7 @@ public class WeatherConditions {
 
   public String getCloudiness() {
     if (!isPopulated) return "";
-    return String.format("%d%%", (int) this.cloudiness);
+    return String.format("%d" + CLOUDINESS_LABEL_SUFFIX, (int) this.cloudiness);
   }
 
   public StringProperty cloudinessProperty() {
@@ -92,10 +98,28 @@ public class WeatherConditions {
 
   public String getPrecipitationVolume() {
     if (!isPopulated) return "";
-    return String.format("%.1f mm", this.precipitationVolume);
+    return String.format("%.1f" + PRECIPITATION_VOLUME_LABEL_SUFFIX, this.precipitationVolume);
   }
 
   public StringProperty precipitationVolumeProperty() {
     return new SimpleStringProperty(this.getPrecipitationVolume());
+  }
+
+  @Override
+  public String toString() {
+    return "- picture ID: "
+        + this.pictureId
+        + "\n"
+        + "- temperature: "
+        + this.temperature
+        + "\n"
+        + "- wind speed: "
+        + this.windSpeed
+        + "\n"
+        + "- cloudiness: "
+        + this.cloudiness
+        + "\n"
+        + "- precipitation volume: "
+        + this.precipitationVolume;
   }
 }
